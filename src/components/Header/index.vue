@@ -28,9 +28,9 @@
     <!--头部第二行 搜索区域-->
     <div class="bottom">
       <h1 class="logoArea">
-        <a class="logo" title="尚品汇" href="###" target="_blank">
+        <router-link class="logo" to="/home">
           <img src="./images/logo.png" alt="" />
-        </a>
+        </router-link>
       </h1>
       <div class="searchArea">
         <form action="###" class="searchForm">
@@ -38,17 +38,18 @@
             type="text"
             id="autocomplete"
             class="input-error input-xxlarge"
+            v-model="keyword"
           />
           <!-- <button class="sui-btn btn-xlarge btn-danger" type="button">
             搜索
           </button> -->
-          <router-link
-            to="/search"
+          <button
             class="sui-btn btn-xlarge btn-danger"
-            tag="button"
             type="button"
-            >搜索</router-link
+            @click="goSearch"
           >
+            搜索
+          </button>
         </form>
       </div>
     </div>
@@ -58,6 +59,56 @@
 <script>
 export default {
   name: "Header",
+  data() {
+    return {
+      keyword: "",
+    };
+  },
+  methods: {
+    // 点击搜索按钮,跳转到搜索页面
+    goSearch() {
+      // 第一种路由传参: 其实就是纯字符串
+      /*       this.$router.push(
+        "/search/" + this.keyword + "?k=" + this.keyword.toUpperCase()
+      ); */
+      // 第二种模板字符串形式:
+      /*       this.$router.push(
+        `/search/${this.keyword}?k=${this.keyword.toUpperCase()}`
+      ); */
+      // 第三种就是对象的写法:
+      this.$router.push(
+        {
+          // 这里注意要给search路由起一个名字
+          name: "search",
+          params: {
+            keyword: this.keyword,
+          },
+          // 虽然params可传可不传,但是如果params参数传递的是空字符串""(keyword: ""),那么会出现路径问题(search不显示在路径中)
+          // 解决办法 给params参数传递的时候使用undefined,即 params:{keyword: "" || undefined }
+          query: {
+            k: this.keyword.toUpperCase(),
+          },
+        },
+ /*        // 成功的回调
+        () => {},
+        // 失败的回调
+        (error) => console.log(error) */
+      ); // 返回的是一个promise对象,通过传递成功和失败的回调虽然解决了警告报错的问题,但是治标不治本
+      // 解决方法: 重写vue-router的push和replace方法
+
+      // path传递参数:
+      /*       this.$router.push({
+        path: `/search/${this.keyword}`,
+        // 注意使用path的方式param参数无效
+        // param: {
+        //   keyword: this.keyword,
+        // },
+        query: {
+          k: this.keyword.toUpperCase(),
+        },
+      }); */
+    },
+  },
 };
 </script>
 
