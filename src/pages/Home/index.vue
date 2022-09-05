@@ -26,8 +26,14 @@ import Floor from "@/pages/Home/Floor";
 // 引入商标组件
 import Brand from "@/pages/Home/Brand";
 
+// 获取仓库数据
+import { mapState } from "vuex";
+
 export default {
   name: "Home",
+  data() {
+    return {};
+  },
   components: {
     ListContainer,
     Recommend,
@@ -36,6 +42,8 @@ export default {
     Floor,
     Brand,
   },
+  computed: {},
+  methods: {},
 };
 </script>
 
