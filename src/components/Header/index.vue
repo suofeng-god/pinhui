@@ -7,8 +7,10 @@
           <p>尚品汇欢迎您！</p>
           <p>
             <span>请</span>
-            <a href="###">登录</a>
-            <a href="###" class="register">免费注册</a>
+            <!-- <a href="###">登录</a> -->
+            <router-link to="/login">登录</router-link>
+            <!-- <a href="###" class="register">免费注册</a> -->
+            <router-link class="register" to="/register">免费注册</router-link>
           </p>
         </div>
         <div class="typeList">
@@ -37,9 +39,16 @@
             id="autocomplete"
             class="input-error input-xxlarge"
           />
-          <button class="sui-btn btn-xlarge btn-danger" type="button">
+          <!-- <button class="sui-btn btn-xlarge btn-danger" type="button">
             搜索
-          </button>
+          </button> -->
+          <router-link
+            to="/search"
+            class="sui-btn btn-xlarge btn-danger"
+            tag="button"
+            type="button"
+            >搜索</router-link
+          >
         </form>
       </div>
     </div>

@@ -12,6 +12,7 @@ import Register from "@/pages/Register";
 import Search from "@/pages/Search";
 
 export default new VueRouter({
+  mode: "history",
   // 配置路由
   routes: [
     {
