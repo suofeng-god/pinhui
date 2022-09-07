@@ -67,6 +67,16 @@ export default {
   methods: {
     // 点击搜索按钮,跳转到搜索页面
     goSearch() {
+      if (this.$route.query) {
+        let location = {
+          name: "search",
+          params: {
+            keyword: this.keyword || undefined,
+          },
+        };
+        location.query = this.$route.query;
+        this.$router.push(location);
+      }
       // 第一种路由传参: 其实就是纯字符串
       /*       this.$router.push(
         "/search/" + this.keyword + "?k=" + this.keyword.toUpperCase()
@@ -76,7 +86,7 @@ export default {
         `/search/${this.keyword}?k=${this.keyword.toUpperCase()}`
       ); */
       // 第三种就是对象的写法:
-      this.$router.push(
+      /*       this.$router.push(
         {
           // 这里注意要给search路由起一个名字
           name: "search",
@@ -88,14 +98,14 @@ export default {
           query: {
             k: this.keyword.toUpperCase(),
           },
-        },
- /*        // 成功的回调
+        }, */
+      /*        // 成功的回调
         () => {},
         // 失败的回调
-        (error) => console.log(error) */
-      ); // 返回的是一个promise对象,通过传递成功和失败的回调虽然解决了警告报错的问题,但是治标不治本
+        (error) => console.log(error)
+      );*/
+      // 返回的是一个promise对象,通过传递成功和失败的回调虽然解决了警告报错的问题,但是治标不治本
       // 解决方法: 重写vue-router的push和replace方法
-
       // path传递参数:
       /*       this.$router.push({
         path: `/search/${this.keyword}`,

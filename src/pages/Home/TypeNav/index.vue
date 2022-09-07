@@ -2,50 +2,67 @@
   <!-- 商品分类导航 -->
   <div class="type-nav">
     <div class="container">
-      <div @mouseleave="leaveIndex">
+      <div @mouseleave="leaveShow" @mouseenter="enterShow">
         <h2 class="all">全部商品分类</h2>
         <!-- 三级联动 -->
-        <div class="sort">
-          <div class="all-sort-list2">
-            <!-- 一级分类 -->
-            <div
-              class="item"
-              v-for="(c1, index) in categoryList"
-              :key="c1.categoryId"
-              :class="{ current: currentIndex == index }"
-            >
-              <h3 @mouseenter="changeIndex(index)">
-                <a href="">{{ c1.categoryName }}</a>
-              </h3>
-              <!-- 二级分类 -->
+        <transition name="sort">
+          <div class="sort" v-show="show">
+            <div class="all-sort-list2" @click="goSearch">
+              <!-- 一级分类 -->
               <div
-                class="item-list clearfix"
-                :style="{ display: currentIndex == index ? 'block' : 'none' }"
+                class="item"
+                v-for="(c1, index) in categoryList"
+                :key="c1.categoryId"
+                :class="{ current: currentIndex == index }"
               >
-                <div
-                  class="subitem"
-                  v-for="(c2, index) in c1.categoryChild"
-                  :key="c2.categoryId"
+                <h3
+                  :class="{ current: currentIndex == index }"
+                  @mouseenter="changeIndex(index)"
                 >
-                  <dl class="fore">
-                    <dt>
-                      <a href="">{{ c2.categoryName }}</a>
-                    </dt>
-                    <!-- 三级分类 -->
-                    <dd>
-                      <em
-                        v-for="(c3, index) in c2.categoryChild"
-                        :key="c3.categoryId"
-                      >
-                        <a href="">{{ c3.categoryName }}</a>
-                      </em>
-                    </dd>
-                  </dl>
+                  <a
+                    href=""
+                    :data-categoryName="c1.categoryName"
+                    :data-category1Id="c1.categoryId"
+                    >{{ c1.categoryName }}</a
+                  >
+                </h3>
+                <!-- 二级分类 -->
+                <div
+                  class="item-list clearfix"
+                  :style="{ display: currentIndex == index ? 'block' : 'none' }"
+                >
+                  <div
+                    class="subitem"
+                    v-for="c2 in c1.categoryChild"
+                    :key="c2.categoryId"
+                  >
+                    <dl class="fore">
+                      <dt>
+                        <a
+                          href=""
+                          :data-categoryName="c2.categoryName"
+                          :data-category2Id="c2.categoryId"
+                          >{{ c2.categoryName }}</a
+                        >
+                      </dt>
+                      <!-- 三级分类 -->
+                      <dd>
+                        <em v-for="c3 in c2.categoryChild" :key="c3.categoryId">
+                          <a
+                            href=""
+                            :data-categoryName="c3.categoryName"
+                            :data-category3Id="c3.categoryId"
+                            >{{ c3.categoryName }}</a
+                          >
+                        </em>
+                      </dd>
+                    </dl>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
+        </transition>
       </div>
       <nav class="nav">
         <a href="###">服装城</a>
@@ -64,33 +81,75 @@
 <script>
 // 获取store中的数据
 import { mapState } from "vuex";
+import throttle from "lodash/throttle";
 export default {
   name: "TypeNav",
   data() {
     return {
       // 存储用户鼠标移动到哪一个一级分类上,记录索引值
       currentIndex: -1, // 表示鼠标没有移上去 不能为0 - 16的数值
+      show: true,
     };
   },
 
   // 组件挂载完毕就可以像服务器发起请求
   mounted() {
-    // 通知vuex发起请求,获取数据,存储于仓库中
-    this.$store.dispatch("home/categoryList");
+    if (this.$route.path !== "/home") {
+      this.show = false;
+    }
   },
   computed: {
     ...mapState({
+      // 这里的state就是总仓库
       categoryList: (state) => state.home.categoryList,
     }),
   },
   methods: {
-    changeIndex(index) {
+    // 鼠标移入改变背景色,并且使用防抖减少触发
+    changeIndex: throttle(function (index) {
       // 正常情况下,鼠标经过每一个一级分类的时候都会触发鼠标进入事件
       // 非正常情况下,鼠标经过的太快,浏览器来不及处理,那么就会导致有些一级分类没有被触发
       this.currentIndex = index;
+    }, 50),
+
+    // 鼠标移入的时候展示商品列表
+    enterShow() {
+      this.show = true;
     },
-    leaveIndex() {
+    //鼠标移出的时候隐藏商品列表
+    leaveShow() {
       this.currentIndex = -1;
+      if (this.$route.path !== "/home") {
+        this.show = false;
+      }
+    },
+
+    // 跳转到search模块
+    goSearch(event) {
+      let element = event.target;
+      let { categoryname, category1id, category2id, category3id } =
+        element.dataset;
+      // 判断是否是a标签
+      if (categoryname) {
+        // 整理路由跳转的参数
+        let location = { name: "search" };
+        let query = { categoryName: categoryname };
+        // 一级分类
+        if (category1id) {
+          query.category1Id = category1id;
+        } else if (category2id) {
+          query.category2Id = category2id;
+        } else {
+          query.category3Id = category3id;
+        }
+        if (this.$route.params) {
+          // 整理完毕参数
+          location.params = this.$route.params;
+          location.query = query;
+          // 路由跳转
+          this.$router.push(location);
+        }
+      }
     },
   },
 };
@@ -216,6 +275,19 @@ export default {
           background-color: skyblue;
         }
       }
+    }
+    // 过渡动画的样式
+    // 过渡动画进入的开始阶段
+    .sort-enter {
+      height: 0;
+    }
+    // 过渡动画的结束状态
+    .sort-enter-to {
+      height: 461px;
+    }
+    // 定义动画的时间,速率
+    .sort-enter-active {
+      transition: all 0.3s linear;
     }
   }
 }
