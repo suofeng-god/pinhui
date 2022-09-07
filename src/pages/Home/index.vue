@@ -6,7 +6,7 @@
     <Recommend></Recommend>
     <Rank></Rank>
     <Like></Like>
-    <Floor></Floor>
+    <Floor v-for="(floor, index) in floorList" :key="floor.id" :list="floor"></Floor>
     <Floor></Floor>
     <Brand></Brand>
   </div>
@@ -42,8 +42,13 @@ export default {
     Floor,
     Brand,
   },
-  computed: {},
+  computed: {
+    ...mapState("home", ["floorList"]),
+  },
   methods: {},
+  mounted() {
+    this.$store.dispatch("home/getFloorList");
+  },
 };
 </script>
 
