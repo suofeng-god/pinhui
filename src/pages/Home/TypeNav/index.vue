@@ -114,7 +114,9 @@ export default {
 
     // 鼠标移入的时候展示商品列表
     enterShow() {
-      this.show = true;
+      if (this.$route.path !== "/home") {
+        this.show = true;
+      }
     },
     //鼠标移出的时候隐藏商品列表
     leaveShow() {

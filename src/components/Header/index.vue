@@ -64,6 +64,11 @@ export default {
       keyword: "",
     };
   },
+  mounted() {
+    this.$bus.$on("clear", function () {
+      this.keyword = "";
+    });
+  },
   methods: {
     // 点击搜索按钮,跳转到搜索页面
     goSearch() {

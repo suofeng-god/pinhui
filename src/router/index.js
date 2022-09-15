@@ -56,12 +56,12 @@ export default new VueRouter({
       /* props: true, */
 
       // 通过路由传递参数方法三:
-      props($route) {
+      /*       props($route) {
         return {
           // keyword: $route.params.keyword,
           keyword: $route.query.k,
-        };
-      },
+        }; 
+      },*/
     },
     // 重定向,在项目跑起来的时候,访问 / ,立马重定向到首页
     {
